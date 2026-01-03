@@ -1,0 +1,3 @@
+import windowSetup
+
+windowSetup.mainWindow()
