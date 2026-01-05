@@ -38,8 +38,9 @@ def USARTlogging():
     log.grid(row = 1, column = 1)
     logFrame = Frame(window)
     logFrame.grid(row = 2, column = 1)
-    logButton = Button(logFrame, text = "START")
+    logButton = Button(logFrame, text = "START", command = communications.commON)
     logButton.grid(row = 0, column = 0, padx = 10, pady = 2)
     logConvertType = Button(logFrame, text = "Convert to VOLTAGE")
     logConvertType.grid(row = 0, column = 1, padx = 10, pady = 2)
     window.mainloop()
+
