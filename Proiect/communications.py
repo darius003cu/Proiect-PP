@@ -20,6 +20,6 @@ def openSerial():
 
 def readLine():
     if ser and ser.in_waiting:
-       line = ser.read().decode().strip()
+       line = ser.readline()
        return line
     return None

@@ -30,6 +30,7 @@ def debugWindow():
     button2.grid(row = 4, column = 1)
     debugWin.mainloop()
     
+
 def exportValues(log):
     while True:
         line = com.readLine()
@@ -39,11 +40,11 @@ def exportValues(log):
     
     if len(data) >= 10:
         for val in data:
-            log.insert(END, val + "\n")
+            log.insert(END, val)
         log.see(END)
         data.clear()
 
-    window.after(1, lambda: exportValues(log))
+    window.after(10, lambda: exportValues(log))
 
 def USARTlogging():
     statusTitle = Label(window, text = "Status: TESTING         Baud rate: 9600")
