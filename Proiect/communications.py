@@ -2,23 +2,6 @@ import serial
 import matplotlib.pyplot as plt
 import numpy as np
 
-import serial
-
-ser = serial.Serial(
-    port="COM3",       
-    baudrate=9600,
-    timeout=1
-)
-
-print("Connected")
-
-while True:
-    line = ser.readline()
-    if line:
-        value = int(line.decode().strip())
-        print(value)
-
-
 def plotTest():
     fig, ax = plt.subplots()
     ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
@@ -31,5 +14,12 @@ def plotUSART():
     plt.ylabel("Tensiune [V]")
     plt.show()
 
+def openSerial():
+    global ser
+    ser = serial.Serial("COM3", 9600, timeout = 0)
 
-
+def readLine():
+    if ser and ser.in_waiting:
+       line = ser.read().decode().strip()
+       return line
+    return None
