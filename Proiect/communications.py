@@ -1,25 +1,22 @@
 import serial
-import matplotlib.pyplot as plt
-import numpy as np
 
-def plotTest():
-    fig, ax = plt.subplots()
-    ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
-    plt.show()
+ser = None
 
-def plotUSART():
-    fig, ax = plt.subplots()
-    ax.plot([1, 2, 3, 4], [1, 4, 2, 3])
-    plt.xlabel("Timp [s]")
-    plt.ylabel("Tensiune [V]")
-    plt.show()
-
-def openSerial():
+def openSerial(portName, baudRate): 
     global ser
-    ser = serial.Serial("COM3", 9600, timeout = 0)
-
+    try:
+        ser = serial.Serial(portName, baudRate, timeout=0)
+        return True
+    except serial.SerialException:
+        ser = None
+        return False
+    
 def readLine():
     if ser and ser.in_waiting:
        line = ser.readline()
-       return line
+       if line:
+        return line
     return None
+
+
+
