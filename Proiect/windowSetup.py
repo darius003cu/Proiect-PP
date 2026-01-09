@@ -5,12 +5,10 @@ from tkinter import filedialog
 from datetime import datetime
 import communications as com
 import matplotlib
-
-matplotlib.use("TkAgg")
-
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.ticker import MaxNLocator
+matplotlib.use("TkAgg")
 
 global BAUD_RATE
 BAUD_RATE = 9600
@@ -28,12 +26,9 @@ def setPort(port):
         com.ser = None
         messagebox.showinfo("Port Changed", f"Portul a fost schimbat la {port}. Apasati START pentru repornire.")
 
-data = []
 global isRunning
 isRunning = False
-state = 0
 recentValues = []
-lastAdc = None  
 
 window = Tk()
 window.geometry("800x480")
@@ -61,9 +56,15 @@ def mainWindow():
     portMenu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Port", menu=portMenu)
     
-    portMenu.add_command(label="COM3", command=lambda: setPort("COM3"))
-    portMenu.add_command(label="COM4", command=lambda: setPort("COM4"))
-    portMenu.add_command(label="COM5", command=lambda: setPort("COM5"))
+    selected_port_var = StringVar(value=SERIAL_PORT)
+
+    def on_port_select():
+        new_port = selected_port_var.get()
+        setPort(new_port)
+
+    portMenu.add_radiobutton(label="COM3", value="COM3", variable=selected_port_var, command=on_port_select)
+    portMenu.add_radiobutton(label="COM4", value="COM4", variable=selected_port_var, command=on_port_select)
+    portMenu.add_radiobutton(label="COM5", value="COM5", variable=selected_port_var, command=on_port_select)
     
     optionMenu = Menu(menubar, tearoff=0) 
     menubar.add_cascade(label="Baud rate", menu=optionMenu)
@@ -170,7 +171,7 @@ def createLivePlot(parent, adcLog, voltLog, clearButton, avgLabel, saveButton, s
         recentValues.clear()
         avgBuffer.clear()
         
-        avgLabel.config(text="Average (50): --- V")
+        avgLabel.config(text="Medie (50): --- V")
         line.set_data([], [])
         ax.set_xlim(0, 10)
         canvas.draw_idle()
@@ -228,7 +229,7 @@ def createLivePlot(parent, adcLog, voltLog, clearButton, avgLabel, saveButton, s
                                     avgBuffer.append(voltage)
                                     if len(avgBuffer) >= 50:
                                         avgVal = sum(avgBuffer) / len(avgBuffer)
-                                        avgLabel.config(text=f"Avg (50): {avgVal:.2f} V")
+                                        avgLabel.config(text=f"Medie (50): {avgVal:.2f} V")
                                         avgBuffer.clear()
 
                                     xData.append(newX)
@@ -296,7 +297,7 @@ def USARTlogging():
     baudTitle.grid(row=0, column=1) 
     voltageBox = Text(serialFrame, width=20, height=15) 
     voltageBox.grid(row=1, column=1, padx=10)
-    avgLabel = Label(serialFrame, text="Average (50): --- V", font=("Arial", 12, "bold"), fg="blue")
+    avgLabel = Label(serialFrame, text="Medie (50): --- V", font=("Arial", 12, "bold"), fg="blue")
     avgLabel.grid(row=2, column=0, columnspan=2, pady=5)
     buttonFrame = Frame(window)
     buttonFrame.grid(row=1, column=0)
