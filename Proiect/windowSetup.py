@@ -10,8 +10,9 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.ticker import MaxNLocator
 matplotlib.use("TkAgg")
 
-global BAUD_RATE
+global BAUD_RATE, isRunning
 BAUD_RATE = 9600
+isRunning = False
 
 global SERIAL_PORT
 SERIAL_PORT = "COM3" 
@@ -25,10 +26,6 @@ def setPort(port):
         com.ser.close()
         com.ser = None
         messagebox.showinfo("Port Changed", f"Portul a fost schimbat la {port}. Apasati START pentru repornire.")
-
-global isRunning
-isRunning = False
-recentValues = []
 
 window = Tk()
 window.geometry("800x480")
