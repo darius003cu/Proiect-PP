@@ -194,12 +194,11 @@ def createLivePlot(parent, adcLog, voltLog, clearButton, avgLabel, saveButton, s
 
                     if '\n' in serialBuffer:
                         lines = serialBuffer.split('\n')
-                        serialBuffer = lines[-1]
                         
                         if len(lines) >= 2:
                             lastCompleteLine = lines[-2] 
 
-                            if lastCompleteLine.strip():
+                            if lastCompleteLine:
                                 adc = int(lastCompleteLine.strip())
 
                                 adcLog.insert(END, f"{adc}\n")
@@ -209,46 +208,41 @@ def createLivePlot(parent, adcLog, voltLog, clearButton, avgLabel, saveButton, s
                                 voltLog.insert(END, f"{voltageVal:.2f}V\n")
                                 voltLog.see(END)
                                 
-                                recentValues.append(adc)
-                                if len(recentValues) > 3:
-                                    recentValues.pop(0)
                                 
-                                if len(recentValues) == 3:
-
-                                    filteredAdc = sorted(recentValues)[1]
-                                    voltage = filteredAdc * 5 / 1024
+                                voltage = adc * 5 / 1024
                                     
-                                    if len(xData) > 0:
-                                        newX = xData[-1] + 1
-                                    else:
-                                        newX = 0
+                                if len(xData) > 0:
+                                    newX = xData[-1] + 1
+                                else:
+                                    newX = 0
 
-                                    sampleTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] 
-                                    fullSessionData.append((newX, voltage, sampleTime))
+                                sampleTime = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")[:-3] 
+                                fullSessionData.append((newX, voltage, sampleTime))
 
-                                    avgBuffer.append(voltage)
-                                    if len(avgBuffer) >= 50:
-                                        avgVal = sum(avgBuffer) / len(avgBuffer)
-                                        avgLabel.config(text=f"Medie (50): {avgVal:.2f} V")
-                                        avgBuffer.clear()
+                                avgBuffer.append(voltage)
+                                if len(avgBuffer) >= 50:
+                                    avgVal = sum(avgBuffer) / len(avgBuffer)
+                                    avgLabel.config(text=f"Medie (50): {avgVal:.2f} V")
+                                    avgBuffer.clear()
 
-                                    xData.append(newX)
-                                    yData.append(voltage)
+                                xData.append(newX)
+                                yData.append(voltage)
 
-                                    if len(xData) > 100:
-                                        xData.pop(0)
-                                        yData.pop(0)
+                                if len(xData) > 100:
+                                    xData.pop(0)
+                                    yData.pop(0)
+                                
 
-                                    line.set_data(xData, yData)
-                                    if xData:
-                                        ax.set_xlim(xData[0], xData[-1] + 5)
-                                    ax.set_ylim(0, 5.5)
-                                    canvas.draw_idle()
+                                line.set_data(xData, yData)
+                                ax.set_ylim(0, 5.5)
+                                pageStart = (newX // 100) * 100
+                                ax.set_xlim(pageStart, pageStart + 100)
+                                canvas.draw_idle()
 
             except (com.serial.SerialException, OSError) as e:
                 print(f"Critical Error: Device disconnected - {e}")
                 statusLabel.config(text="Status: DISCONNECTED", fg="red")
-                toggleButton.config(text="START", bg="#dddddd", fg="black")
+                toggleButton.config(text="START", bg ="#dddddd", fg="black")
                 
                 isRunning = False 
                 
